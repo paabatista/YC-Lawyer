@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="YC Lawyer">
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"  stop-color="#f8e3a3"/>
+      <stop offset="35%" stop-color="#e6c168"/>
+      <stop offset="65%" stop-color="#c9942f"/>
+      <stop offset="100%" stop-color="#a5711c"/>
+    </linearGradient>
+    <linearGradient id="goldSoft" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f6d98a"/>
+      <stop offset="100%" stop-color="#c9942f"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Scales of justice -->
+  <g stroke="url(#gold)" stroke-width="4" fill="none" stroke-linecap="round">
+    <!-- top pivot -->
+    <circle cx="200" cy="70" r="6" fill="url(#gold)" stroke="none"/>
+    <!-- beam -->
+    <line x1="120" y1="95" x2="280" y2="95"/>
+    <line x1="200" y1="72" x2="200" y2="150"/>
+    <!-- hangers -->
+    <line x1="120" y1="95" x2="105" y2="130"/>
+    <line x1="120" y1="95" x2="135" y2="130"/>
+    <line x1="280" y1="95" x2="265" y2="130"/>
+    <line x1="280" y1="95" x2="295" y2="130"/>
+    <!-- pans -->
+    <path d="M95 130 q25 26 50 0" />
+    <path d="M255 130 q25 26 50 0" />
+    <!-- base -->
+    <line x1="170" y1="150" x2="230" y2="150"/>
+    <line x1="200" y1="150" x2="200" y2="158"/>
+  </g>
+
+  <!-- YC monogram -->
+  <text x="200" y="215" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="130" fill="url(#gold)" letter-spacing="-6">YC</text>
+
+  <!-- LAWYER -->
+  <text x="200" y="262" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="600" font-size="40" fill="url(#goldSoft)" letter-spacing="14">LAWYER</text>
+</svg>

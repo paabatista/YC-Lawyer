@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YC Lawyer — Lcda. Yezubey Calvo | Abogada</title>
+  <meta name="description" content="Lcda. Yezubey Calvo — Asesoría legal en Panamá. Derecho de familia, civil, laboral, penal, mercantil y migración. Cotiza tu caso hoy." />
+  <meta name="theme-color" content="#0f2a6b" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="YC Lawyer — Lcda. Yezubey Calvo" />
+  <meta property="og:description" content="Asesoría legal con compromiso, ética y cercanía." />
+  <meta property="og:type" content="website" />
+
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- Fondo dinámico -->
+  <div class="bg" aria-hidden="true"></div>
+  <canvas id="particles" aria-hidden="true"></canvas>
+
+  <!-- Navbar -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="#inicio" class="brand">
+        <img id="nav-logo" src="assets/logo.svg" alt="YC Lawyer" />
+        <b data-nombre>Lcda. Yezubey Calvo</b>
+      </a>
+      <button class="nav-toggle" aria-label="Menú" id="navToggle">☰</button>
+      <nav class="nav-links" id="navLinks">
+        <a href="#servicios">Servicios</a>
+        <a href="#sobre-mi">Sobre mí</a>
+        <a href="#valores">¿Por qué yo?</a>
+        <a href="#cotizar">Contacto</a>
+        <a href="#cotizar" class="btn btn-gold" style="padding:9px 20px">Cotizar</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="inicio">
+    <div class="container">
+      <img class="logo-big" id="hero-logo" src="assets/logo.svg" alt="Logo YC Lawyer" />
+      <p class="eyebrow" data-profesion>Abogada</p>
+      <h1 data-nombre>Lcda. Yezubey Calvo</h1>
+      <p class="subtitle" data-eslogan>Asesoría legal con compromiso, ética y cercanía</p>
+      <p class="lead" data-descripcion>Acompaño a mis clientes en cada paso de su proceso legal, con atención personalizada y total confidencialidad.</p>
+      <div class="cta">
+        <a href="#cotizar" class="btn btn-gold">✦ Cotizar mi caso</a>
+        <a href="#" id="hero-wa" class="btn btn-wa" target="_blank" rel="noopener">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.7-.8-2-.9-.3-.1-.5-.2-.7.2s-.8.9-1 1.1c-.2.2-.4.2-.7 0-1.7-.8-2.8-1.5-3.9-3.4-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.6s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.8.4-.3.4-1.1 1-1.1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.3 5.2 4.6 2 .8 2.7.9 3.7.8.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.4z"/><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-2.9.8.8-2.8-.2-.3a8.2 8.2 0 1 1 6.8 3.6z"/></svg>
+          WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Servicios -->
+  <section id="servicios">
+    <div class="container">
+      <div class="section-head reveal" data-section="servicios">
+        <p class="eyebrow" data-head="eyebrow">Áreas de práctica</p>
+        <h2 data-head="titulo">Servicios legales</h2>
+        <p data-head="descripcion">Soluciones legales claras y efectivas en las áreas que más importan.</p>
+      </div>
+      <div class="grid" id="servicios-grid"><!-- se llena por JS --></div>
+    </div>
+  </section>
+
+  <!-- Sobre mí -->
+  <section id="sobre-mi">
+    <div class="container">
+      <div class="about reveal" data-section="sobre-mi">
+        <div class="photo" id="about-photo">
+          <div class="ph">Foto profesional<br />(editable desde el panel)</div>
+        </div>
+        <div>
+          <p class="eyebrow" data-head="eyebrow" style="color:var(--accent-2);letter-spacing:3px;text-transform:uppercase;font-size:.78rem">Sobre mí</p>
+          <h2 data-head="titulo">Lcda. Yezubey Calvo</h2>
+          <p data-head="descripcion">Abogada dedicada a brindar soluciones legales efectivas y humanas.</p>
+          <div class="stats">
+            <div><b data-aniosExperiencia>5+</b><span>Años de experiencia</span></div>
+            <div><b data-casosAtendidos>100+</b><span>Casos atendidos</span></div>
+          </div>
+          <div style="margin-top:26px">
+            <a href="#cotizar" class="btn btn-gold">Agenda una consulta</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Valores -->
+  <section id="valores">
+    <div class="container">
+      <div class="section-head reveal" data-section="valores">
+        <p class="eyebrow" data-head="eyebrow">Mi compromiso</p>
+        <h2 data-head="titulo">¿Por qué elegirme?</h2>
+        <p data-head="descripcion"></p>
+      </div>
+      <div class="values" id="valores-grid"><!-- se llena por JS --></div>
+    </div>
+  </section>
+
+  <!-- Cotizar / Contacto -->
+  <section id="cotizar">
+    <div class="container">
+      <div class="quote-wrap">
+        <div class="quote-info reveal" data-section="cotizar">
+          <p class="eyebrow" data-head="eyebrow" style="color:var(--accent-2);letter-spacing:3px;text-transform:uppercase;font-size:.78rem">Contacto</p>
+          <h2 data-head="titulo">Cotiza tu caso</h2>
+          <p data-head="descripcion">Cuéntame tu situación y te responderé lo antes posible. Puedes escribirme directamente por WhatsApp o llenar el formulario.</p>
+          <ul class="contact-list">
+            <li><span class="ci">📞</span><a data-tel-link href="tel:+50768315054"><span data-telefono>+507 6831-5054</span></a></li>
+            <li><span class="ci">✉️</span><a data-mail-link href="mailto:abogada.yezubey.calvo@gmail.com"><span data-email>abogada.yezubey.calvo@gmail.com</span></a></li>
+            <li><span class="ci">📸</span><a data-ig-link href="https://instagram.com/Yc.lawyer" target="_blank" rel="noopener"><span data-ig>@Yc.lawyer</span></a></li>
+            <li><span class="ci">📍</span><span data-ubicacion>Panamá</span></li>
+          </ul>
+          <div style="margin-top:26px">
+            <a href="#" id="info-wa" class="btn btn-wa" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+          </div>
+        </div>
+
+        <form class="quote reveal" id="quoteForm">
+          <div class="field">
+            <label for="q-nombre">Nombre completo *</label>
+            <input id="q-nombre" name="nombre" type="text" required placeholder="Tu nombre" />
+          </div>
+          <div class="field">
+            <label for="q-tel">Teléfono / WhatsApp *</label>
+            <input id="q-tel" name="telefono" type="tel" required placeholder="Ej: 6000-0000" />
+          </div>
+          <div class="field">
+            <label for="q-email">Correo (opcional)</label>
+            <input id="q-email" name="email" type="email" placeholder="tucorreo@ejemplo.com" />
+          </div>
+          <div class="field">
+            <label for="q-area">Área legal</label>
+            <select id="q-area" name="area">
+              <option>Derecho de Familia</option>
+              <option>Derecho Civil</option>
+              <option>Derecho Laboral</option>
+              <option>Derecho Penal</option>
+              <option>Derecho Mercantil</option>
+              <option>Migración</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="q-msg">Describe tu caso *</label>
+            <textarea id="q-msg" name="mensaje" required placeholder="Cuéntame brevemente tu situación..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-gold" id="quoteSubmit">Enviar solicitud</button>
+          <p class="form-note">Al enviar se abrirá WhatsApp con tu mensaje listo para enviar.</p>
+          <div class="form-msg" id="formMsg"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="brand">
+        <img id="footer-logo" src="assets/logo.svg" alt="YC Lawyer" style="height:56px" />
+      </div>
+      <p data-nombre>Lcda. Yezubey Calvo</p>
+      <p style="color:var(--text-dim)" data-profesion>Abogada</p>
+      <div class="socials">
+        <a id="foot-wa" href="#" target="_blank" rel="noopener" title="WhatsApp">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-2.9.8.8-2.8-.2-.3a8.2 8.2 0 1 1 6.8 3.6z"/></svg>
+        </a>
+        <a id="foot-ig" href="#" target="_blank" rel="noopener" title="Instagram">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4a3.8 3.8 0 0 1-1.4-.9 3.8 3.8 0 0 1-.9-1.4c-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.1 0-3.5 0-4.7.1-1.1.1-1.7.2-2.1.4-.5.2-.9.4-1.3.8-.4.4-.6.8-.8 1.3-.2.4-.3 1-.4 2.1C2.6 8.5 2.6 8.9 2.6 12s0 3.5.1 4.7c.1 1.1.2 1.7.4 2.1.2.5.4.9.8 1.3.4.4.8.6 1.3.8.4.2 1 .3 2.1.4 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1.1-.1 1.7-.2 2.1-.4.5-.2.9-.4 1.3-.8.4-.4.6-.8.8-1.3.2-.4.3-1 .4-2.1.1-1.2.1-1.6.1-4.7s0-3.5-.1-4.7c-.1-1.1-.2-1.7-.4-2.1a3.5 3.5 0 0 0-.8-1.3 3.5 3.5 0 0 0-1.3-.8c-.4-.2-1-.3-2.1-.4C15.5 4 15.1 4 12 4zm0 3.1a4.9 4.9 0 1 1 0 9.8 4.9 4.9 0 0 1 0-9.8zm0 8a3.1 3.1 0 1 0 0-6.2 3.1 3.1 0 0 0 0 6.2zm6.3-8.2a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0z"/></svg>
+        </a>
+        <a id="foot-mail" href="#" title="Correo">✉️</a>
+      </div>
+      <p style="font-size:.8rem;margin-top:10px">© <span id="year"></span> <span data-nombre>Lcda. Yezubey Calvo</span>. Todos los derechos reservados.</p>
+      <p style="font-size:.75rem;margin-top:6px;opacity:.6"><a href="admin.html" style="color:var(--text-dim);text-decoration:none">Acceso administración</a></p>
+    </div>
+  </footer>
+
+  <!-- WhatsApp flotante -->
+  <a id="wa-float" class="wa-float" href="#" target="_blank" rel="noopener" title="Escríbeme por WhatsApp" aria-label="WhatsApp">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-2.9.8.8-2.8-.2-.3a8.2 8.2 0 1 1 6.8 3.6z"/><path d="M17.5 14.4c-.3-.2-1.7-.8-2-.9-.3-.1-.5-.2-.7.2s-.8.9-1 1.1c-.2.2-.4.2-.7 0-1.7-.8-2.8-1.5-3.9-3.4-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.6s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.8.4-.3.4-1.1 1-1.1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.3 5.2 4.6 2 .8 2.7.9 3.7.8.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.4z"/></svg>
+  </a>
+
+  <script type="module" src="js/site.js"></script>
+</body>
+</html>

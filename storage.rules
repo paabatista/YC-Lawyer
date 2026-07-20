@@ -1,0 +1,14 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Imágenes del sitio (logo, foto):
+    //  - Lectura pública (para mostrarlas en la web)
+    //  - Escritura solo para usuario autenticado (Yezubey)
+    match /sitio/{archivo=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.resource.size < 5 * 1024 * 1024   // máx 5 MB
+                   && request.resource.contentType.matches('image/.*');
+    }
+  }
+}

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de administración — YC Lawyer</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .admin { max-width: 860px; margin: 0 auto; padding: 30px 20px 80px; }
+    .panel { background: var(--card); border: 1px solid var(--card-brd); border-radius: var(--radius); padding: 26px; margin-bottom: 22px; backdrop-filter: blur(8px); }
+    .panel h2 { font-family: var(--font-serif); color: var(--accent-2); margin-bottom: 4px; font-size: 1.3rem; }
+    .panel .hint { color: var(--text-dim); font-size: .85rem; margin-bottom: 18px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 640px){ .row { grid-template-columns: 1fr; } }
+    .login-box { max-width: 400px; margin: 12vh auto 0; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom: 24px; }
+    .topbar .brand img { height: 44px; }
+    .hidden { display: none !important; }
+    .item-edit { border:1px solid var(--card-brd); border-radius:12px; padding:14px; margin-bottom:12px; background:rgba(0,0,0,.2); }
+    .item-edit .row3 { display:grid; grid-template-columns: 70px 1fr; gap:10px; }
+    .del-btn { background:rgba(255,80,80,.15); color:#ff9b9b; border:1px solid rgba(255,80,80,.3); border-radius:8px; padding:6px 12px; cursor:pointer; font-size:.85rem; }
+    .add-btn { background:rgba(226,184,79,.12); color:var(--accent-2); border:1px solid var(--card-brd); border-radius:8px; padding:8px 16px; cursor:pointer; }
+    .save-bar { position: sticky; bottom: 0; background: rgba(5,11,31,.92); backdrop-filter: blur(10px); padding: 16px 0; border-top:1px solid var(--card-brd); text-align:center; z-index: 40; }
+    .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 12px 22px; border-radius: 10px; z-index: 100; display:none; }
+    .toast.ok { display:block; background:#1e7a45; color:#fff; }
+    .toast.err { display:block; background:#a12; color:#fff; }
+    .sol { border:1px solid var(--card-brd); border-radius:12px; padding:16px; margin-bottom:12px; background:rgba(0,0,0,.2); }
+    .sol.nuevo { border-color: var(--accent); }
+    .sol .meta { font-size:.82rem; color:var(--text-dim); display:flex; gap:14px; flex-wrap:wrap; margin:6px 0; }
+    .badge { background:var(--accent); color:#1a1200; border-radius:999px; padding:2px 10px; font-size:.72rem; font-weight:700; }
+    .tabs { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+    .tab { padding:10px 18px; border-radius:999px; border:1px solid var(--card-brd); background:rgba(255,255,255,.03); color:var(--text-dim); cursor:pointer; }
+    .tab.active { background:linear-gradient(135deg,var(--accent-2),var(--accent-3)); color:#1a1200; border-color:transparent; }
+    .preview-color { display:inline-block; width:24px; height:24px; border-radius:6px; vertical-align:middle; margin-left:8px; border:1px solid rgba(255,255,255,.2); }
+    .warn { background:rgba(255,180,0,.1); border:1px solid rgba(255,180,0,.3); color:#ffd98a; padding:12px 16px; border-radius:10px; font-size:.88rem; margin-bottom:20px; }
+    img.logo-prev { height:60px; background:#0a1533; border-radius:8px; padding:6px; border:1px solid var(--card-brd); }
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- LOGIN -->
+  <div id="loginView" class="admin">
+    <div class="panel login-box">
+      <div class="center" style="margin-bottom:20px">
+        <img src="assets/logo.svg" alt="YC Lawyer" style="height:90px" />
+      </div>
+      <h2 style="text-align:center;font-family:var(--font-serif);color:var(--accent-2)">Panel de administración</h2>
+      <p class="hint center">Ingresa con tu correo y contraseña</p>
+      <div id="noFirebase" class="warn hidden">⚠️ Firebase aún no está configurado. Edita <b>js/firebase-config.js</b> con los datos de tu proyecto para poder iniciar sesión.</div>
+      <form id="loginForm">
+        <div class="field"><label>Correo</label><input id="email" type="email" required placeholder="correo@ejemplo.com" /></div>
+        <div class="field"><label>Contraseña</label><input id="password" type="password" required placeholder="••••••••" /></div>
+        <button class="btn btn-gold" style="width:100%;justify-content:center" type="submit">Iniciar sesión</button>
+        <p id="loginErr" class="form-msg"></p>
+      </form>
+      <p class="center" style="margin-top:16px"><a href="index.html" style="color:var(--text-dim)">← Volver al sitio</a></p>
+    </div>
+  </div>
+
+  <!-- PANEL -->
+  <div id="panelView" class="admin hidden">
+    <div class="topbar">
+      <a href="index.html" class="brand"><img src="assets/logo.svg" alt="YC Lawyer" /></a>
+      <div>
+        <a href="index.html" class="btn btn-ghost" style="padding:8px 16px" target="_blank">Ver sitio ↗</a>
+        <button id="logout" class="btn btn-ghost" style="padding:8px 16px">Salir</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="datos">📇 Datos</button>
+      <button class="tab" data-tab="secciones">🧩 Secciones</button>
+      <button class="tab" data-tab="marca">🎨 Marca</button>
+      <button class="tab" data-tab="servicios">⚖️ Servicios</button>
+      <button class="tab" data-tab="valores">✨ Valores</button>
+      <button class="tab" data-tab="solicitudes">📨 Solicitudes <span id="solCount"></span></button>
+    </div>
+
+    <!-- DATOS -->
+    <div class="tab-content" data-content="datos">
+      <div class="panel">
+        <h2>Datos principales</h2>
+        <p class="hint">Información que aparece en tu sitio.</p>
+        <div class="row">
+          <div class="field"><label>Nombre</label><input id="f-nombre" /></div>
+          <div class="field"><label>Profesión</label><input id="f-profesion" /></div>
+        </div>
+        <div class="field"><label>Eslogan</label><input id="f-eslogan" /></div>
+        <div class="field"><label>Descripción (inicio)</label><textarea id="f-descripcion"></textarea></div>
+        <div class="row">
+          <div class="field"><label>Años de experiencia</label><input id="f-aniosExperiencia" /></div>
+          <div class="field"><label>Casos atendidos</label><input id="f-casosAtendidos" /></div>
+        </div>
+        <p class="hint" style="margin:6px 0 0">💡 El texto de "Sobre mí" y los títulos de cada sección se editan en la pestaña <b>🧩 Secciones</b>.</p>
+      </div>
+      <div class="panel">
+        <h2>Contacto</h2>
+        <p class="hint">El teléfono/WhatsApp debe incluir el código de país.</p>
+        <div class="row">
+          <div class="field"><label>Teléfono (mostrado)</label><input id="f-telefono" placeholder="+507 6831-5054" /></div>
+          <div class="field"><label>WhatsApp (solo dígitos)</label><input id="f-whatsapp" placeholder="50768315054" /></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Correo</label><input id="f-email" /></div>
+          <div class="field"><label>Instagram (sin @)</label><input id="f-instagram" /></div>
+        </div>
+        <div class="field"><label>Ubicación</label><input id="f-ubicacion" /></div>
+      </div>
+    </div>
+
+    <!-- SECCIONES -->
+    <div class="tab-content hidden" data-content="secciones">
+      <div class="panel">
+        <h2>Secciones del sitio y menú</h2>
+        <p class="hint">Activa o desactiva cada sección, cambia el nombre que aparece en el menú (header), reordénalas con ▲▼ y edita sus títulos y textos.</p>
+        <div id="seccionesList"></div>
+      </div>
+    </div>
+
+    <!-- MARCA -->
+    <div class="tab-content hidden" data-content="marca">
+      <div class="panel">
+        <h2>Colores</h2>
+        <p class="hint">Cambia la identidad visual de tu sitio.</p>
+        <div class="row">
+          <div class="field"><label>Color primario (azul)</label><input id="f-colorPrimario" type="color" style="height:48px" /></div>
+          <div class="field"><label>Color de acento (dorado)</label><input id="f-colorAcento" type="color" style="height:48px" /></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Logo</h2>
+        <p class="hint">Sube tu logo (PNG con fondo transparente recomendado). Si no subes nada, se usa el logo dorado por defecto.</p>
+        <img id="logoPrev" class="logo-prev hidden" alt="Logo actual" />
+        <div class="field" style="margin-top:12px"><input id="f-logoFile" type="file" accept="image/*" /></div>
+      </div>
+      <div class="panel">
+        <h2>Foto profesional</h2>
+        <p class="hint">Foto para la sección "Sobre mí".</p>
+        <img id="fotoPrev" class="logo-prev hidden" alt="Foto actual" />
+        <div class="field" style="margin-top:12px"><input id="f-fotoFile" type="file" accept="image/*" /></div>
+      </div>
+    </div>
+
+    <!-- SERVICIOS -->
+    <div class="tab-content hidden" data-content="servicios">
+      <div class="panel">
+        <h2>Áreas de práctica</h2>
+        <p class="hint">Usa un emoji como ícono (ej: ⚖️ 📜 💼 🏢 🛂 👨‍👩‍👧).</p>
+        <div id="serviciosList"></div>
+        <button class="add-btn" id="addServicio">+ Agregar servicio</button>
+      </div>
+    </div>
+
+    <!-- VALORES -->
+    <div class="tab-content hidden" data-content="valores">
+      <div class="panel">
+        <h2>Valores / ¿Por qué elegirme?</h2>
+        <div id="valoresList"></div>
+        <button class="add-btn" id="addValor">+ Agregar valor</button>
+      </div>
+    </div>
+
+    <!-- SOLICITUDES -->
+    <div class="tab-content hidden" data-content="solicitudes">
+      <div class="panel">
+        <h2>Solicitudes de cotización</h2>
+        <p class="hint">Las solicitudes enviadas desde tu web aparecen aquí.</p>
+        <div id="solList"><p class="hint">Cargando...</p></div>
+      </div>
+    </div>
+
+    <div class="save-bar" data-savebar>
+      <button id="saveBtn" class="btn btn-gold" style="padding:14px 40px">💾 Guardar cambios</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
