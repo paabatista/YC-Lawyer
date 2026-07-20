@@ -47,12 +47,27 @@ Web de Yesubey/
 3. Copia el objeto `firebaseConfig` que te muestra y **pégalo en `js/firebase-config.js`**
    reemplazando los valores `PON_AQUI_...`.
 4. En el menú lateral, activa estos servicios:
-   - **Authentication** → *Sign-in method* → habilita **Correo electrónico/Contraseña**.
-     Luego en la pestaña **Users** crea el usuario de Yezubey (correo + contraseña).
+   - **Authentication** → *Sign-in method* → habilita **Correo electrónico/Contraseña**
+     **y** también **Google** (elige un correo de soporte al activarlo).
+     Si vas a usar contraseña, en la pestaña **Users** crea el usuario de Yezubey.
    - **Firestore Database** → *Crear base de datos* (modo producción).
      Ve a la pestaña **Reglas** y pega el contenido de `firestore.rules`.
    - **Storage** → *Comenzar*. En **Reglas** pega el contenido de `storage.rules`.
-5. Listo. Entra a `admin.html`, inicia sesión y edita todo.
+5. Listo. Entra a `admin.html`, inicia sesión (correo o Google) y edita todo.
+
+### 🔑 Quién puede administrar (importante)
+
+Como se puede entrar con Google, **solo los correos de una lista blanca** pueden editar.
+Esa lista está en **3 lugares** y debe ser **idéntica** en los tres:
+
+- `js/admin.js` → constante `ADMIN_EMAILS`
+- `firestore.rules` → función `esAdmin()`
+- `storage.rules` → función `esAdmin()`
+
+Por defecto incluye `abogada.yezubey.calvo@gmail.com` y `pablobatista75@gmail.com`.
+Para agregar/quitar administradores, edita esos 3 sitios con el mismo correo y vuelve a
+subir el sitio (y a publicar las reglas en Firebase). Cualquier otra cuenta que intente
+entrar será rechazada automáticamente.
 
 ---
 

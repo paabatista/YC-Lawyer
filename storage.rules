@@ -1,12 +1,23 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
+
+    /* ⚠️ CORREOS ADMINISTRADORES PERMITIDOS
+       Deben coincidir con la lista ADMIN_EMAILS de js/admin.js. */
+    function esAdmin() {
+      return request.auth != null &&
+        request.auth.token.email in [
+          'abogada.yezubey.calvo@gmail.com',
+          'pablobatista75@gmail.com'
+        ];
+    }
+
     // Imágenes del sitio (logo, foto):
     //  - Lectura pública (para mostrarlas en la web)
-    //  - Escritura solo para usuario autenticado (Yezubey)
+    //  - Escritura solo para un administrador
     match /sitio/{archivo=**} {
       allow read: if true;
-      allow write: if request.auth != null
+      allow write: if esAdmin()
                    && request.resource.size < 5 * 1024 * 1024   // máx 5 MB
                    && request.resource.contentType.matches('image/.*');
     }

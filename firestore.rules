@@ -2,20 +2,31 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    /* ⚠️ CORREOS ADMINISTRADORES PERMITIDOS
+       Deben coincidir con la lista ADMIN_EMAILS de js/admin.js.
+       Solo estas cuentas (por contraseña o Google) pueden editar. */
+    function esAdmin() {
+      return request.auth != null &&
+        request.auth.token.email in [
+          'abogada.yezubey.calvo@gmail.com',
+          'pablobatista75@gmail.com'
+        ];
+    }
+
     // Configuración del sitio:
     //  - Cualquiera puede LEER (la web pública la necesita)
-    //  - Solo un usuario autenticado (Yezubey) puede ESCRIBIR
+    //  - Solo un administrador puede ESCRIBIR
     match /config/{doc} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if esAdmin();
     }
 
     // Solicitudes de cotización:
     //  - Cualquiera puede CREAR (el formulario público)
-    //  - Solo autenticado puede LEER, ACTUALIZAR y BORRAR (el panel)
+    //  - Solo un administrador puede LEER, ACTUALIZAR y BORRAR
     match /solicitudes/{doc} {
       allow create: if true;
-      allow read, update, delete: if request.auth != null;
+      allow read, update, delete: if esAdmin();
     }
   }
 }

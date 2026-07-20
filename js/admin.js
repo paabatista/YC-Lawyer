@@ -12,6 +12,19 @@ import { DEFAULTS } from "./defaults.js";
 const CDN = "https://www.gstatic.com/firebasejs/10.12.2/";
 let app, auth, db, storage, cfgActual = { ...DEFAULTS };
 
+/* ============================================================
+   ⚠️ CORREOS ADMINISTRADORES PERMITIDOS
+   Solo estos correos pueden entrar al panel y editar el sitio,
+   sin importar si entran con contraseña o con Google.
+   Deben coincidir EXACTAMENTE con los correos de las cuentas.
+   (Esta lista también debe estar en firestore.rules y storage.rules)
+   ============================================================ */
+const ADMIN_EMAILS = [
+  "abogada.yezubey.calvo@gmail.com",   // Yezubey
+  "pablobatista75@gmail.com"           // Pablo (administrador técnico)
+];
+const esAdminEmail = (email) => ADMIN_EMAILS.map(e => e.toLowerCase()).includes((email || "").toLowerCase());
+
 /* ---------- Utilidades UI ---------- */
 const $ = (id) => document.getElementById(id);
 function toast(msg, ok = true) {
@@ -28,7 +41,8 @@ async function init() {
     return;
   }
   const { initializeApp } = await import(CDN + "firebase-app.js");
-  const { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } = await import(CDN + "firebase-auth.js");
+  const { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut,
+          GoogleAuthProvider, signInWithPopup } = await import(CDN + "firebase-auth.js");
   const { getFirestore } = await import(CDN + "firebase-firestore.js");
   const { getStorage } = await import(CDN + "firebase-storage.js");
 
@@ -37,27 +51,49 @@ async function init() {
   db = getFirestore(app);
   storage = getStorage(app);
 
-  // Login
+  const err = $("loginErr");
+  const mostrarError = (msg) => { err.className = "form-msg err"; err.textContent = msg; };
+
+  // Login con correo y contraseña
   $("loginForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const err = $("loginErr");
     err.className = "form-msg";
     try {
       await signInWithEmailAndPassword(auth, $("email").value, $("password").value);
     } catch (ex) {
-      err.className = "form-msg err";
-      err.textContent = "Correo o contraseña incorrectos.";
+      mostrarError("Correo o contraseña incorrectos.");
+    }
+  });
+
+  // Login con Google
+  $("googleBtn").addEventListener("click", async () => {
+    err.className = "form-msg";
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (ex) {
+      if (ex.code !== "auth/popup-closed-by-user" && ex.code !== "auth/cancelled-popup-request") {
+        mostrarError("No se pudo iniciar sesión con Google.");
+      }
     }
   });
 
   $("logout").addEventListener("click", () => signOut(auth));
 
   onAuthStateChanged(auth, (user) => {
-    if (user) {
+    if (user && esAdminEmail(user.email)) {
+      // Usuario autorizado
       $("loginView").classList.add("hidden");
       $("panelView").classList.remove("hidden");
       cargarTodo();
+    } else if (user) {
+      // Autenticado pero NO autorizado -> cerrar sesión
+      signOut(auth);
+      $("panelView").classList.add("hidden");
+      $("loginView").classList.remove("hidden");
+      mostrarError("Esta cuenta no tiene permiso para administrar el sitio.");
     } else {
+      // Sin sesión
       $("panelView").classList.add("hidden");
       $("loginView").classList.remove("hidden");
     }
