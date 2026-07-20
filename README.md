@@ -113,9 +113,11 @@ El sitio ya guarda cada solicitud en el panel y abre WhatsApp. Si además quiere
 
 ## ✏️ Cómo edita Yezubey su web
 
-1. Entra a `tu-sitio.com/admin.html`
-2. Inicia sesión con su correo y contraseña.
-3. Cambia lo que quiera (datos, colores, logo, servicios…) y presiona **💾 Guardar cambios**.
+1. **Acceso oculto:** en la web pública, hacer **doble clic sobre el logo** (arriba o el del
+   inicio) abre el panel. No hay ningún enlace visible de "administración", para que ningún
+   visitante curioso intente entrar. (También se puede abrir directo con `tu-sitio.com/admin.html`.)
+2. Inicia sesión con su correo/contraseña **o con Google**.
+3. Cambia lo que quiera (datos, secciones, colores, logo, servicios…) y presiona **💾 Guardar cambios**.
 4. Los cambios aparecen al instante en la web pública. También ve las **solicitudes** recibidas.
 
 ---

@@ -291,6 +291,22 @@ function initMenu() {
   }
 }
 
+/* ---- Acceso oculto al panel: doble clic en el logo ----
+   No hay enlace visible; solo quien sepa el truco (la clienta) entra. */
+function initAdminAcceso() {
+  const abrir = (e) => { e.preventDefault(); window.location.href = "admin.html"; };
+  ["nav-logo", "hero-logo", "footer-logo"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.cursor = "pointer";
+      el.addEventListener("dblclick", abrir);
+    }
+  });
+  // Evita que el doble clic sobre el logo del header dispare la navegación del enlace
+  const brand = document.querySelector(".brand");
+  if (brand) brand.addEventListener("click", (e) => { if (e.detail >= 2) e.preventDefault(); });
+}
+
 /* ---- Partículas doradas (ligero, se apaga si prefiere-reduced-motion) ---- */
 function initParticles() {
   const c = document.getElementById("particles");
@@ -331,6 +347,7 @@ function initParticles() {
 (async function () {
   document.getElementById("year").textContent = new Date().getFullYear();
   initMenu();
+  initAdminAcceso();
   initParticles();
   initFormulario();
   await initFirebase();

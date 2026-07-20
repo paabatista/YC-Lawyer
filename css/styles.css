@@ -129,8 +129,8 @@ header.nav {
   border-bottom: 1px solid rgba(226,184,79,.14);
 }
 .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
-.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
-.brand img { height: 46px; width: auto; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); cursor: pointer; }
+.brand img { height: 58px; width: auto; }
 .brand b { font-family: var(--font-serif); font-size: 1.15rem; letter-spacing: .5px; }
 .brand span { color: var(--accent-2); }
 .nav-links { display: flex; align-items: center; gap: 26px; }
@@ -140,7 +140,7 @@ header.nav {
 
 /* ---------------- Hero ---------------- */
 .hero { padding: 90px 0 70px; text-align: center; }
-.hero .logo-big { width: 220px; max-width: 60vw; margin: 0 auto 26px; display: block;
+.hero .logo-big { width: 270px; max-width: 68vw; margin: 0 auto 26px; display: block;
   filter: drop-shadow(0 12px 30px rgba(226,184,79,.25)); animation: rise .9s ease both; }
 .hero .eyebrow { color: var(--accent-2); letter-spacing: 4px; text-transform: uppercase; font-size: .8rem; margin-bottom: 14px; }
 .hero h1 { font-family: var(--font-serif); font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.1; margin-bottom: 10px; }
@@ -264,4 +264,13 @@ footer .socials a:hover { transform: translateY(-3px); }
   .nav-toggle { display: block; }
   .about, .quote-wrap { grid-template-columns: 1fr; }
   .about .photo { max-width: 380px; margin: 0 auto; }
+}
+
+/* En celular: mostrar solo el logo en el header (evita texto encimado).
+   El logo ya dice "YC Lawyer", así que el nombre no se repite aquí. */
+@media (max-width: 700px) {
+  .brand b { display: none; }
+  .brand img { height: 52px; }
+  .nav-inner { height: 66px; }
+  .nav-links { top: 66px; }
 }
