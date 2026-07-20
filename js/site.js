@@ -291,6 +291,16 @@ function initMenu() {
   }
 }
 
+/* ---- Botón "volver arriba" ---- */
+function initBackToTop() {
+  const btn = document.getElementById("toTop");
+  if (!btn) return;
+  const alternar = () => btn.classList.toggle("show", window.scrollY > 400);
+  window.addEventListener("scroll", alternar, { passive: true });
+  btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  alternar();
+}
+
 /* ---- Acceso oculto al panel: doble clic en el logo ----
    No hay enlace visible; solo quien sepa el truco (la clienta) entra. */
 function initAdminAcceso() {
@@ -348,6 +358,7 @@ function initParticles() {
   document.getElementById("year").textContent = new Date().getFullYear();
   initMenu();
   initAdminAcceso();
+  initBackToTop();
   initParticles();
   initFormulario();
   await initFirebase();
