@@ -6,7 +6,7 @@
    - Maneja el formulario de cotización -> Firestore + WhatsApp
    ============================================================ */
 
-import { firebaseConfig, firebaseListo } from "./firebase-config.js";
+import { firebaseConfig, firebaseListo, WEB3FORMS_KEY } from "./firebase-config.js";
 import { DEFAULTS } from "./defaults.js";
 
 let db = null;
@@ -215,61 +215,70 @@ function initFormulario() {
     };
 
     btn.disabled = true;
+    const textoBtn = btn.textContent;
     btn.textContent = "Enviando...";
+    msgBox.className = "form-msg";
 
-    // 1) Guarda la solicitud en Firestore (si está disponible)
-    await guardarSolicitud(data);
+    // Se envía por correo (Web3Forms) y se guarda en el panel (Firestore).
+    // Con que uno de los dos funcione, la solicitud queda registrada.
+    const [okEmail, okDB] = await Promise.all([
+      enviarEmail(data, cfg).catch(() => false),
+      guardarSolicitud(data).then(() => true).catch(() => false)
+    ]);
 
-    // 2) Envía por correo (EmailJS opcional, si está configurado)
-    enviarEmailOpcional(data, cfg);
-
-    // 3) Abre WhatsApp con el mensaje listo
-    const texto =
-      `*Nueva solicitud de cotización*\n\n` +
-      `👤 Nombre: ${data.nombre}\n` +
-      `📞 Teléfono: ${data.telefono}\n` +
-      (data.email ? `✉️ Correo: ${data.email}\n` : "") +
-      `⚖️ Área: ${data.area}\n\n` +
-      `📝 Caso: ${data.mensaje}`;
-    const waUrl = `https://wa.me/${(cfg.whatsapp || "").replace(/\D/g, "")}?text=${encodeURIComponent(texto)}`;
-
-    msgBox.className = "form-msg ok";
-    msgBox.textContent = "¡Gracias! Se abrirá WhatsApp para completar tu solicitud.";
-    window.open(waUrl, "_blank");
+    if (okEmail || okDB) {
+      msgBox.className = "form-msg ok";
+      msgBox.textContent = "✓ ¡Solicitud enviada! La Lcda. Yezubey te contactará pronto.";
+      form.reset();
+    } else {
+      // Fallback: si nada funcionó, ofrece WhatsApp
+      const texto =
+        `Hola, quiero una cotización.\n\n` +
+        `Nombre: ${data.nombre}\nTeléfono: ${data.telefono}\n` +
+        (data.email ? `Correo: ${data.email}\n` : "") +
+        `Área: ${data.area}\nCaso: ${data.mensaje}`;
+      const waUrl = `https://wa.me/${(cfg.whatsapp || "").replace(/\D/g, "")}?text=${encodeURIComponent(texto)}`;
+      msgBox.className = "form-msg err";
+      msgBox.innerHTML = `No se pudo enviar. Intenta de nuevo o <a href="${waUrl}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">escríbenos por WhatsApp</a>.`;
+    }
 
     btn.disabled = false;
-    btn.textContent = "Enviar solicitud";
-    form.reset();
+    btn.textContent = textoBtn;
   });
 }
 
 async function guardarSolicitud(data) {
-  if (!db) return;
-  try {
-    const { collection, addDoc, serverTimestamp } =
-      await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
-    await addDoc(collection(db, "solicitudes"), {
-      ...data,
-      leido: false,
-      fecha: serverTimestamp()
-    });
-  } catch (e) {
-    console.warn("No se pudo guardar la solicitud en Firestore.", e);
-  }
+  if (!db) throw new Error("Firestore no disponible");
+  const { collection, addDoc, serverTimestamp } =
+    await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+  await addDoc(collection(db, "solicitudes"), {
+    ...data,
+    leido: false,
+    fecha: serverTimestamp()
+  });
 }
 
-/* EmailJS: opcional. Si quieres correo automático, agrega el script de EmailJS
-   en index.html y define window.EMAILJS = {serviceId, templateId, publicKey}. */
-function enviarEmailOpcional(data, cfg) {
-  try {
-    if (window.emailjs && window.EMAILJS) {
-      window.emailjs.send(window.EMAILJS.serviceId, window.EMAILJS.templateId, {
-        to_email: cfg.email,
-        nombre: data.nombre, telefono: data.telefono,
-        email: data.email, area: data.area, mensaje: data.mensaje
-      }, window.EMAILJS.publicKey);
-    }
-  } catch (e) { /* silencioso */ }
+/* Envía la solicitud por correo a la abogada usando Web3Forms.
+   Devuelve true si el correo se envió correctamente. */
+async function enviarEmail(data, cfg) {
+  if (!WEB3FORMS_KEY) return false;
+  const res = await fetch("https://api.web3forms.com/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({
+      access_key: WEB3FORMS_KEY,
+      subject: `Nueva solicitud de cotización — ${data.nombre}`,
+      from_name: "Sitio web YC Lawyer",
+      replyto: data.email || undefined,
+      Nombre: data.nombre,
+      Teléfono: data.telefono,
+      Correo: data.email || "(no indicó)",
+      "Área legal": data.area,
+      Mensaje: data.mensaje
+    })
+  });
+  const json = await res.json().catch(() => ({}));
+  return json.success === true;
 }
 
 /* ---- Animación al hacer scroll ---- */
@@ -317,39 +326,82 @@ function initAdminAcceso() {
   if (brand) brand.addEventListener("click", (e) => { if (e.detail >= 2) e.preventDefault(); });
 }
 
-/* ---- Partículas doradas (ligero, se apaga si prefiere-reduced-motion) ---- */
+/* ---- Partículas interactivas (estilo antigravity) ----
+   Pequeños trazos dorados que se mueven solos y reaccionan al mouse:
+   cuando el cursor se acerca, los empuja; luego vuelven a su deriva suave. */
 function initParticles() {
   const c = document.getElementById("particles");
-  if (!c || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (!c) return;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const ctx = c.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const R = 150;          // radio de influencia del mouse
+  const FUERZA = 1.1;     // intensidad del empuje
+  const mouse = { x: -9999, y: -9999, activo: false };
   let w, h, parts;
-  function resize() {
-    w = c.width = window.innerWidth;
-    h = c.height = window.innerHeight;
-    const n = Math.min(70, Math.floor(w / 22));
-    parts = Array.from({ length: n }, () => ({
+
+  function crear() {
+    const ang = Math.random() * Math.PI * 2;
+    const sp = 0.10 + Math.random() * 0.22;      // deriva base (nunca se detiene)
+    return {
       x: Math.random() * w, y: Math.random() * h,
-      r: Math.random() * 1.8 + 0.5,
-      dx: (Math.random() - 0.5) * 0.25,
-      dy: (Math.random() - 0.5) * 0.25,
-      a: Math.random() * 0.5 + 0.2
-    }));
+      bvx: Math.cos(ang) * sp, bvy: Math.sin(ang) * sp,
+      pvx: 0, pvy: 0,                             // empuje del mouse (se disipa)
+      len: 3 + Math.random() * 6,
+      a: 0.22 + Math.random() * 0.45
+    };
   }
+  function resize() {
+    w = window.innerWidth || document.documentElement.clientWidth;
+    h = window.innerHeight || document.documentElement.clientHeight;
+    if (!w || !h) { requestAnimationFrame(resize); return; }  // aún sin layout: reintenta
+    c.width = w * dpr; c.height = h * dpr;
+    c.style.width = w + "px"; c.style.height = h + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.min(140, Math.round((w * h) / 13000));
+    parts = Array.from({ length: n }, crear);
+  }
+
   function draw() {
+    if (!parts) { requestAnimationFrame(draw); return; }  // espera a tener partículas
     ctx.clearRect(0, 0, w, h);
     for (const p of parts) {
-      p.x += p.dx; p.y += p.dy;
-      if (p.x < 0 || p.x > w) p.dx *= -1;
-      if (p.y < 0 || p.y > h) p.dy *= -1;
+      if (mouse.activo) {
+        const dx = p.x - mouse.x, dy = p.y - mouse.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < R * R) {
+          const d = Math.sqrt(d2) || 1;
+          const f = (1 - d / R) * FUERZA;
+          p.pvx += (dx / d) * f; p.pvy += (dy / d) * f;
+        }
+      }
+      p.pvx *= 0.9; p.pvy *= 0.9;                 // el empuje se disipa
+      const vx = p.bvx + p.pvx, vy = p.bvy + p.pvy;
+      p.x += vx; p.y += vy;
+
+      // envolver bordes
+      if (p.x < -12) p.x = w + 12; else if (p.x > w + 12) p.x = -12;
+      if (p.y < -12) p.y = h + 12; else if (p.y > h + 12) p.y = -12;
+
+      // trazo orientado según su movimiento
+      const vlen = Math.hypot(vx, vy) || 1;
+      const L = p.len + Math.min(Math.hypot(p.pvx, p.pvy) * 6, 14); // se estira al ser empujado
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(226,184,79,${p.a})`;
-      ctx.fill();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.x + (vx / vlen) * L, p.y + (vy / vlen) * L);
+      ctx.strokeStyle = `rgba(226,184,79,${p.a})`;
+      ctx.lineWidth = 2; ctx.lineCap = "round";
+      ctx.stroke();
     }
     requestAnimationFrame(draw);
   }
+
   resize();
   window.addEventListener("resize", resize);
+  if (!reduce) {
+    window.addEventListener("mousemove", (e) => { mouse.x = e.clientX; mouse.y = e.clientY; mouse.activo = true; }, { passive: true });
+    window.addEventListener("mouseleave", () => { mouse.activo = false; });
+  }
   draw();
 }
 

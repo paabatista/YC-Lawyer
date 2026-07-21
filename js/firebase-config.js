@@ -17,13 +17,29 @@
    ============================================================ */
 
 export const firebaseConfig = {
-  apiKey: "PON_AQUI_TU_API_KEY",
-  authDomain: "PON_AQUI.firebaseapp.com",
-  projectId: "PON_AQUI_TU_PROJECT_ID",
-  storageBucket: "PON_AQUI.appspot.com",
-  messagingSenderId: "PON_AQUI",
-  appId: "PON_AQUI"
+  apiKey: "AIzaSyCiuwRyHBkw7fftMKtV6-MdfF60q1VuI-w",
+  authDomain: "yc-lawyer.firebaseapp.com",
+  projectId: "yc-lawyer",
+  storageBucket: "yc-lawyer.firebasestorage.app",
+  messagingSenderId: "331741072202",
+  appId: "1:331741072202:web:c3fb4ef472f8d282eecfb3",
+  measurementId: "G-N8PENZMDWZ"
 };
 
 // Detecta si Firebase todavía no fue configurado (para usar el modo por defecto)
 export const firebaseListo = !firebaseConfig.apiKey.startsWith("PON_AQUI");
+
+/* ============================================================
+   ENVÍO DE CORREO DEL FORMULARIO (Web3Forms — gratis, sin servidor)
+   ------------------------------------------------------------
+   Para que al enviar una cotización le llegue un correo a la abogada:
+   1) Entra a https://web3forms.com
+   2) Escribe el correo de la abogada (abogada.yezubey.calvo@gmail.com)
+      y presiona "Create Access Key".
+   3) Le llegará una "Access Key" a ese correo. Pégala abajo.
+   (La Access Key es pública y segura de publicar; NO es una contraseña.)
+
+   Si lo dejas vacío, la solicitud igual se guarda en el panel (Firestore),
+   pero no se enviará el correo automático.
+   ============================================================ */
+export const WEB3FORMS_KEY = "";
