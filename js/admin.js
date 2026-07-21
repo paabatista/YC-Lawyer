@@ -10,14 +10,14 @@ import { firebaseConfig, firebaseListo } from "./firebase-config.js";
 import { DEFAULTS } from "./defaults.js";
 
 const CDN = "https://www.gstatic.com/firebasejs/10.12.2/";
-let app, auth, db, storage, cfgActual = { ...DEFAULTS };
+let app, auth, db, cfgActual = { ...DEFAULTS };
 
 /* ============================================================
    ⚠️ CORREOS ADMINISTRADORES PERMITIDOS
    Solo estos correos pueden entrar al panel y editar el sitio,
    sin importar si entran con contraseña o con Google.
    Deben coincidir EXACTAMENTE con los correos de las cuentas.
-   (Esta lista también debe estar en firestore.rules y storage.rules)
+   (Esta lista también debe estar en firestore.rules)
    ============================================================ */
 const ADMIN_EMAILS = [
   "abogada.yezubey.calvo@gmail.com",   // Yezubey
@@ -44,12 +44,10 @@ async function init() {
   const { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut,
           GoogleAuthProvider, signInWithPopup } = await import(CDN + "firebase-auth.js");
   const { getFirestore } = await import(CDN + "firebase-firestore.js");
-  const { getStorage } = await import(CDN + "firebase-storage.js");
 
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
-  storage = getStorage(app);
 
   const err = $("loginErr");
   const mostrarError = (msg) => { err.className = "form-msg err"; err.textContent = msg; };
@@ -123,13 +121,30 @@ function pintarFormulario() {
   set("f-instagram", c.instagram); set("f-ubicacion", c.ubicacion);
   set("f-colorPrimario", c.colorPrimario || "#0f2a6b");
   set("f-colorAcento", c.colorAcento || "#e2b84f");
+  set("f-logoUrl", c.logoUrl);
+  set("f-fotoUrl", c.fotoUrl);
 
-  if (c.logoUrl) { $("logoPrev").src = c.logoUrl; $("logoPrev").classList.remove("hidden"); }
-  if (c.fotoUrl) { $("fotoPrev").src = c.fotoUrl; $("fotoPrev").classList.remove("hidden"); }
+  vistaPrevia("f-logoUrl", "logoPrev");
+  vistaPrevia("f-fotoUrl", "fotoPrev");
 
   pintarServicios(c.servicios || []);
   pintarValores(c.valores || []);
   pintarSecciones(c.secciones && c.secciones.length ? c.secciones : DEFAULTS.secciones);
+}
+
+/* Muestra la vista previa de una imagen a partir del enlace/ruta escrito */
+function vistaPrevia(inputId, imgId) {
+  const input = $(inputId), img = $(imgId);
+  if (!input || !img) return;
+  const actualizar = () => {
+    const url = input.value.trim();
+    if (!url) { img.classList.add("hidden"); return; }
+    img.onload = () => img.classList.remove("hidden");
+    img.onerror = () => img.classList.add("hidden");
+    img.src = url;
+  };
+  actualizar();
+  input.oninput = actualizar;
 }
 
 /* ---------- Secciones (header, orden, visibilidad y textos) ---------- */
@@ -263,8 +278,8 @@ function recolectar() {
     ubicacion: $("f-ubicacion").value.trim(),
     colorPrimario: $("f-colorPrimario").value,
     colorAcento: $("f-colorAcento").value,
-    logoUrl: cfgActual.logoUrl || "",
-    fotoUrl: cfgActual.fotoUrl || "",
+    logoUrl: $("f-logoUrl").value.trim(),
+    fotoUrl: $("f-fotoUrl").value.trim(),
     servicios, valores
   };
 }
@@ -273,33 +288,18 @@ async function guardar() {
   const btn = $("saveBtn");
   btn.disabled = true; btn.textContent = "Guardando...";
   try {
-    // Subir imágenes si se seleccionaron
-    const logoFile = $("f-logoFile").files[0];
-    const fotoFile = $("f-fotoFile").files[0];
-    if (logoFile) cfgActual.logoUrl = await subirImagen(logoFile, "logo");
-    if (fotoFile) cfgActual.fotoUrl = await subirImagen(fotoFile, "foto");
-
     const datos = recolectar();
     const { doc, setDoc } = await import(CDN + "firebase-firestore.js");
     await setDoc(doc(db, "config", "site"), datos, { merge: true });
     cfgActual = { ...cfgActual, ...datos };
     toast("✅ Cambios guardados correctamente");
-    if (cfgActual.logoUrl) { $("logoPrev").src = cfgActual.logoUrl; $("logoPrev").classList.remove("hidden"); }
-    if (cfgActual.fotoUrl) { $("fotoPrev").src = cfgActual.fotoUrl; $("fotoPrev").classList.remove("hidden"); }
-    $("f-logoFile").value = ""; $("f-fotoFile").value = "";
+    vistaPrevia("f-logoUrl", "logoPrev");
+    vistaPrevia("f-fotoUrl", "fotoPrev");
   } catch (e) {
     console.error(e);
     toast("❌ Error al guardar: " + (e.message || e), false);
   }
   btn.disabled = false; btn.textContent = "💾 Guardar cambios";
-}
-
-async function subirImagen(file, nombre) {
-  const { ref, uploadBytes, getDownloadURL } = await import(CDN + "firebase-storage.js");
-  const ext = (file.name.split(".").pop() || "png").toLowerCase();
-  const r = ref(storage, `sitio/${nombre}.${ext}`);
-  await uploadBytes(r, file);
-  return await getDownloadURL(r);
 }
 
 /* ---------- Solicitudes ---------- */

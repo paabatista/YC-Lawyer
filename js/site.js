@@ -58,10 +58,15 @@ function aplicar(cfg) {
     });
   }
 
-  // Foto de "Sobre mí"
+  // Foto de "Sobre mí": se precarga y solo se muestra si existe;
+  // si el archivo no está (o el enlace falla), se conserva el marco por defecto.
   if (cfg.fotoUrl) {
     const box = document.getElementById("about-photo");
-    if (box) box.innerHTML = `<img src="${cfg.fotoUrl}" alt="${cfg.nombre}" />`;
+    if (box) {
+      const prueba = new Image();
+      prueba.onload = () => { box.innerHTML = `<img src="${cfg.fotoUrl}" alt="${cfg.nombre || "Foto"}" />`; };
+      prueba.src = cfg.fotoUrl;   // onerror -> no hace nada (queda el placeholder)
+    }
   }
 
   // Textos con data-atributos (identidad / hero / contacto)

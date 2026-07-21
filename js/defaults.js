@@ -22,8 +22,9 @@ export const DEFAULTS = {
   // Identidad visual (editable desde el panel)
   colorPrimario: "#0f2a6b",
   colorAcento: "#e2b84f",
-  logoUrl: "",                        // si está vacío usa assets/logo.svg
-  fotoUrl: "",                        // foto para la sección "Sobre mí"
+  logoUrl: "",                        // vacío = usa assets/logo.svg (logo por defecto)
+  fotoUrl: "assets/foto.jpg",         // foto de "Sobre mí": pon el archivo en assets/foto.jpg
+                                      // (si no existe, se muestra un marco elegante por defecto)
 
   // Estadísticas de "Sobre mí"
   aniosExperiencia: "5+",
