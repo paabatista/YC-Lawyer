@@ -72,12 +72,12 @@ export const DEFAULTS = {
 
   // Áreas de práctica / servicios (tarjetas)
   servicios: [
-    { icono: "👨‍👩‍👧", titulo: "Derecho de Familia",  descripcion: "Divorcios, pensiones alimenticias, guarda y crianza, y trámites familiares." },
-    { icono: "📜", titulo: "Derecho Civil",       descripcion: "Contratos, sucesiones, propiedad y reclamos civiles." },
-    { icono: "💼", titulo: "Derecho Laboral",     descripcion: "Despidos, prestaciones, contratos de trabajo y conflictos laborales." },
-    { icono: "⚖️", titulo: "Derecho Penal",       descripcion: "Defensa y representación en procesos penales con total dedicación." },
-    { icono: "🏢", titulo: "Derecho Mercantil",   descripcion: "Constitución de sociedades, contratos comerciales y asesoría a empresas." },
-    { icono: "🛂", titulo: "Migración",           descripcion: "Trámites migratorios, residencias y regularización de estatus." }
+    { icono: "👨‍👩‍👧", titulo: "Derecho de Familia",   descripcion: "Alimentos, guarda y crianza, y demás trámites familiares." },
+    { icono: "💼", titulo: "Derecho Laboral",      descripcion: "Permisos de trabajo y asuntos laborales." },
+    { icono: "📜", titulo: "Derecho Civil",        descripcion: "Sucesiones, demandas y asuntos civiles." },
+    { icono: "⚖️", titulo: "Derecho Penal",        descripcion: "Querellas, defensa y representación en procesos penales." },
+    { icono: "🏢", titulo: "Derecho Comercial",    descripcion: "Constitución de sociedades y asesoría comercial." },
+    { icono: "🛂", titulo: "Derecho Migratorio",   descripcion: "Residencia, levantamiento y trámites migratorios." }
   ],
 
   // Valores / por qué elegirla (tarjetas)
