@@ -168,8 +168,11 @@ function itemSeccion(s) {
   const d = document.createElement("div");
   d.className = "item-edit";
   d.dataset.id = s.id;
-  const titulo = NOMBRE_SECCION[s.id] || s.id;
+  const esCustom = !NOMBRE_SECCION[s.id];   // las que no son bloques fijos son personalizadas
+  const titulo = esCustom ? "🧩 Sección personalizada" : NOMBRE_SECCION[s.id];
   const checked = s.visible === false ? "" : "checked";
+  const btnEliminar = esCustom ? `<button class="del-btn s-del" type="button" title="Eliminar sección">Eliminar</button>` : "";
+  const labelTexto = esCustom ? "Contenido / texto (cada línea será un párrafo)" : "Descripción / texto";
   d.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
       <strong style="font-family:var(--font-serif);color:var(--accent-2)">${titulo}</strong>
@@ -179,6 +182,7 @@ function itemSeccion(s) {
         <label style="display:flex;align-items:center;gap:6px;margin:0;color:var(--text-dim);font-size:.85rem">
           <input class="s-visible" type="checkbox" ${checked} style="width:auto"/> Mostrar
         </label>
+        ${btnEliminar}
       </div>
     </div>
     <div class="field" style="margin:0 0 10px"><label>Nombre en el menú (header)</label><input class="s-nav" value="${attr(s.nav)}" /></div>
@@ -186,10 +190,13 @@ function itemSeccion(s) {
       <div class="field" style="margin:0"><label>Título pequeño (arriba)</label><input class="s-eyebrow" value="${attr(s.eyebrow)}" /></div>
       <div class="field" style="margin:0"><label>Título grande</label><input class="s-titulo" value="${attr(s.titulo)}" /></div>
     </div>
-    <div class="field" style="margin:10px 0 0"><label>Descripción / texto</label><textarea class="s-desc">${escapeText(s.descripcion)}</textarea></div>`;
+    <div class="field" style="margin:10px 0 0"><label>${labelTexto}</label><textarea class="s-desc">${escapeText(s.descripcion)}</textarea></div>`;
 
   d.querySelector(".s-up").onclick = () => { if (d.previousElementSibling) { d.parentNode.insertBefore(d, d.previousElementSibling); actualizarBotonesOrden(); } };
   d.querySelector(".s-down").onclick = () => { if (d.nextElementSibling) { d.parentNode.insertBefore(d.nextElementSibling, d); actualizarBotonesOrden(); } };
+  if (esCustom) d.querySelector(".s-del").onclick = () => {
+    if (confirm("¿Eliminar esta sección? Se quitará del sitio al guardar.")) { d.remove(); actualizarBotonesOrden(); }
+  };
   return d;
 }
 
@@ -201,6 +208,20 @@ function actualizarBotonesOrden() {
     it.querySelector(".s-up").style.opacity = (i === 0) ? ".35" : "1";
     it.querySelector(".s-down").style.opacity = (i === items.length - 1) ? ".35" : "1";
   });
+}
+
+/* Plantilla para una sección nueva (personalizada) */
+let contadorSeccion = 0;
+function nuevaSeccionCustom() {
+  contadorSeccion++;
+  return {
+    id: "custom-" + Date.now() + "-" + contadorSeccion,
+    nav: "Nueva sección",
+    visible: true,
+    eyebrow: "",
+    titulo: "Nueva sección",
+    descripcion: "Escribe aquí el contenido de esta sección."
+  };
 }
 
 /* ---------- Servicios (lista editable) ---------- */
@@ -402,6 +423,7 @@ initTabs();
 document.addEventListener("click", (e) => {
   if (e.target.id === "addServicio") $("serviciosList").appendChild(itemServicio(undefined));
   if (e.target.id === "addValor") $("valoresList").appendChild(itemValor(undefined));
+  if (e.target.id === "addSeccion") { $("seccionesList").appendChild(itemSeccion(nuevaSeccionCustom())); actualizarBotonesOrden(); }
   if (e.target.id === "saveBtn") guardar();
 });
 init();

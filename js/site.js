@@ -145,6 +145,17 @@ function aplicarSecciones(cfg) {
   const secciones = Array.isArray(cfg.secciones) && cfg.secciones.length
     ? cfg.secciones : DEFAULTS.secciones;
 
+  // 0) Crear en el DOM las secciones PERSONALIZADAS (las que no son bloques fijos)
+  document.querySelectorAll("section[data-custom]").forEach(el => el.remove());
+  const footer = document.querySelector("footer");
+  secciones.forEach(s => {
+    if (!document.getElementById(s.id)) {
+      const sec = crearSeccionCustom(s);
+      if (footer) footer.parentNode.insertBefore(sec, footer);
+      else document.body.appendChild(sec);
+    }
+  });
+
   // 1) Reconstruir los enlaces del header en el orden configurado
   const navLinks = document.getElementById("navLinks");
   if (navLinks) {
@@ -187,11 +198,17 @@ function aplicarSecciones(cfg) {
     if (el) el.style.display = (s.visible === false) ? "none" : "";
 
     const cont = document.querySelector(`[data-section="${s.id}"]`);
-    if (!cont) return;
-    setHead(cont, "eyebrow", s.eyebrow);
-    // Para "sobre-mi", si no hay título usa el nombre
-    setHead(cont, "titulo", s.titulo || (s.id === "sobre-mi" ? cfg.nombre : ""));
-    setHead(cont, "descripcion", s.descripcion);
+    if (cont) {
+      setHead(cont, "eyebrow", s.eyebrow);
+      // Para "sobre-mi", si no hay título usa el nombre
+      setHead(cont, "titulo", s.titulo || (s.id === "sobre-mi" ? cfg.nombre : ""));
+      setHead(cont, "descripcion", s.descripcion);
+    }
+    // Cuerpo de las secciones personalizadas (el texto va en el cuerpo, no en la cabecera)
+    if (el && el.dataset.custom) {
+      const body = el.querySelector(".custom-body");
+      if (body) body.innerHTML = parrafos(s.descripcion);
+    }
   });
 }
 
@@ -200,6 +217,28 @@ function setHead(cont, campo, valor) {
   if (!el) return;
   el.textContent = valor || "";
   el.style.display = (valor && String(valor).trim()) ? "" : "none";
+}
+
+/* Crea el bloque HTML de una sección personalizada (título + texto libre) */
+function crearSeccionCustom(s) {
+  const sec = document.createElement("section");
+  sec.id = s.id;
+  sec.dataset.custom = "1";
+  sec.innerHTML = `
+    <div class="container">
+      <div class="section-head reveal" data-section="${s.id}">
+        <p class="eyebrow" data-head="eyebrow"></p>
+        <h2 data-head="titulo"></h2>
+      </div>
+      <div class="custom-body reveal"></div>
+    </div>`;
+  return sec;
+}
+
+/* Convierte texto con saltos de línea en párrafos seguros */
+function parrafos(txt = "") {
+  return String(txt).split(/\n+/).map(l => l.trim()).filter(Boolean)
+    .map(l => `<p>${escapeHtml(l)}</p>`).join("");
 }
 
 /* ---- Formulario de cotización ---- */
