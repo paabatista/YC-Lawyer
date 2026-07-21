@@ -10,14 +10,14 @@ import { firebaseConfig, firebaseListo } from "./firebase-config.js";
 import { DEFAULTS } from "./defaults.js";
 
 const CDN = "https://www.gstatic.com/firebasejs/10.12.2/";
-let app, auth, db, cfgActual = { ...DEFAULTS };
+let app, auth, db, storage, cfgActual = { ...DEFAULTS };
 
 /* ============================================================
    ⚠️ CORREOS ADMINISTRADORES PERMITIDOS
    Solo estos correos pueden entrar al panel y editar el sitio,
    sin importar si entran con contraseña o con Google.
    Deben coincidir EXACTAMENTE con los correos de las cuentas.
-   (Esta lista también debe estar en firestore.rules)
+   (Esta lista también debe estar en firestore.rules y storage.rules)
    ============================================================ */
 const ADMIN_EMAILS = [
   "abogada.yezubey.calvo@gmail.com",   // Yezubey
@@ -44,10 +44,12 @@ async function init() {
   const { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut,
           GoogleAuthProvider, signInWithPopup } = await import(CDN + "firebase-auth.js");
   const { getFirestore } = await import(CDN + "firebase-firestore.js");
+  const { getStorage } = await import(CDN + "firebase-storage.js");
 
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
+  storage = getStorage(app);
 
   const err = $("loginErr");
   const mostrarError = (msg) => { err.className = "form-msg err"; err.textContent = msg; };
@@ -288,11 +290,18 @@ async function guardar() {
   const btn = $("saveBtn");
   btn.disabled = true; btn.textContent = "Guardando...";
   try {
+    // Si se eligió un archivo, se sube a Storage y su enlace llena el campo de URL
+    const logoFile = $("f-logoFile").files[0];
+    const fotoFile = $("f-fotoFile").files[0];
+    if (logoFile) $("f-logoUrl").value = await subirImagen(logoFile, "logo");
+    if (fotoFile) $("f-fotoUrl").value = await subirImagen(fotoFile, "foto");
+
     const datos = recolectar();
     const { doc, setDoc } = await import(CDN + "firebase-firestore.js");
     await setDoc(doc(db, "config", "site"), datos, { merge: true });
     cfgActual = { ...cfgActual, ...datos };
     toast("✅ Cambios guardados correctamente");
+    $("f-logoFile").value = ""; $("f-fotoFile").value = "";
     vistaPrevia("f-logoUrl", "logoPrev");
     vistaPrevia("f-fotoUrl", "fotoPrev");
   } catch (e) {
@@ -300,6 +309,16 @@ async function guardar() {
     toast("❌ Error al guardar: " + (e.message || e), false);
   }
   btn.disabled = false; btn.textContent = "💾 Guardar cambios";
+}
+
+/* Sube una imagen a Firebase Storage y devuelve su enlace público.
+   Requiere tener Storage activado y las reglas de storage.rules publicadas. */
+async function subirImagen(file, nombre) {
+  const { ref, uploadBytes, getDownloadURL } = await import(CDN + "firebase-storage.js");
+  const ext = (file.name.split(".").pop() || "png").toLowerCase();
+  const r = ref(storage, `sitio/${nombre}.${ext}`);
+  await uploadBytes(r, file);
+  return await getDownloadURL(r);
 }
 
 /* ---------- Solicitudes ---------- */

@@ -52,32 +52,32 @@ Web de Yesubey/
      Si vas a usar contraseña, en la pestaña **Users** crea el usuario de Yezubey.
    - **Firestore Database** → *Crear base de datos* (modo producción).
      Ve a la pestaña **Reglas** y pega el contenido de `firestore.rules`.
-
-> **Storage NO es necesario.** Solo se usan **Authentication** y **Firestore** (ambos gratis).
-> El logo y la foto se ponen como archivos del proyecto (`assets/`) o pegando un enlace en
-> el panel — sin subir nada a Storage. (`storage.rules` queda en el repo por si algún día
-> se activa Storage, pero no hace falta configurarlo.)
+   - **Storage** → *Comenzar* (modo producción). En **Reglas** pega el contenido de
+     `storage.rules`. *(Solo hace falta si se van a subir imágenes desde el panel; si solo
+     usas archivos locales en `assets/`, puedes dejarlo para después.)*
 
 5. Listo. Entra a `admin.html`, inicia sesión (correo o Google) y edita todo.
 
-### 🖼️ Logo y foto (sin Storage)
+### 🖼️ Logo y foto (3 formas)
 
-- **Logo:** por defecto usa `assets/logo.svg`. Para cambiarlo, reemplaza ese archivo, o en
-  el panel (pestaña **Marca**) pega un enlace de imagen.
-- **Foto de "Sobre mí":** coloca la foto en **`assets/foto.jpg`** dentro del proyecto
-  (aparece automáticamente), o pega un enlace en el panel. Si no hay foto, se muestra un
-  marco elegante por defecto (nunca una imagen rota).
+- **Archivo local (por defecto):** el logo usa `assets/logo.svg` y la foto de "Sobre mí"
+  usa **`assets/foto.jpg`**. Pon la foto ahí en el proyecto y aparece automáticamente.
+  Si no hay foto, se muestra un marco elegante (nunca una imagen rota).
+- **Enlace:** en el panel (pestaña **Marca**) pega la URL de una imagen.
+- **Subir al panel:** en **Marca** elige un archivo → se guarda en **Firebase Storage** y
+  se usa automáticamente (requiere Storage activado y `storage.rules` publicadas).
 
 ### 🔑 Quién puede administrar (importante)
 
 Como se puede entrar con Google, **solo los correos de una lista blanca** pueden editar.
-Esa lista está en **2 lugares** y debe ser **idéntica** en ambos:
+Esa lista está en **3 lugares** y debe ser **idéntica** en los tres:
 
 - `js/admin.js` → constante `ADMIN_EMAILS`
 - `firestore.rules` → función `esAdmin()`
+- `storage.rules` → función `esAdmin()`
 
 Por defecto incluye `abogada.yezubey.calvo@gmail.com` y `pablobatista75@gmail.com`.
-Para agregar/quitar administradores, edita esos 2 sitios con el mismo correo y vuelve a
+Para agregar/quitar administradores, edita esos 3 sitios con el mismo correo y vuelve a
 subir el sitio (y a publicar las reglas en Firebase). Cualquier otra cuenta que intente
 entrar será rechazada automáticamente.
 
